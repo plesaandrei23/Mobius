@@ -38,7 +38,7 @@ V0
 
 V1.1
 -we created controllers for authentification
--we created the routes for the authentification process made thru post request thru either register or logic (teste it using postman)
+-we created the routes for the authentification process made thru post request thru either register or login (tested it using postman)
 
 //TODO GET /api/projects (who: authenticated users, what: return all projects where the user is MP or TST)
 //TODO POST /api/projects (who: authenticated users (that will become MP on the project), what: created a new project and adds current user as MP)
