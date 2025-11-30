@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+# folderul de lucru din container
+WORKDIR /app
+
+# copy only package*.json so we use the Docker cache
+COPY package*.json ./
+
+# install dependencies
+RUN npm install
+
+# copy the rest of the code
+COPY . .
+
+# port for backend to run on
+EXPOSE 8080
+
+# start command
+CMD ["npm", "start"]

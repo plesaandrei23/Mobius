@@ -1,0 +1,21 @@
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: bugtracker-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: bugtracker-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

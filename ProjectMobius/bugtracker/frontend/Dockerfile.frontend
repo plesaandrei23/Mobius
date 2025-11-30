@@ -1,0 +1,9 @@
+FROM nginx:alpine
+
+# Copiem tot frontend-ul în folderul public al Nginx
+COPY . /usr/share/nginx/html
+
+# Nginx servește index.html de aici
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
