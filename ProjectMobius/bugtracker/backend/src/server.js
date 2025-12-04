@@ -26,6 +26,8 @@ app.use("/api/auth", authRoutes);
 // app.use("/api/projects", projectRoutes);
 // app.use("/api/bugs", bugRoutes);
 
+//add admin control to see all ussers, projects, bugs (new user type admin)
+
 const start = async () => {
     try {
         await synchronizeDatabase();
