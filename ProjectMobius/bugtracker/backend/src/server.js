@@ -18,13 +18,14 @@ app.get("/api/health", (req, res) => {
 });
 
 // routes
-app.use("/api/auth", authRoutes);
+import projectRoutes from "../routes/projectRoutes.js";
+import bugRoutes from "../routes/bugRoutes.js";
+import { requireAuth } from "./authMiddleware.js";
 
-// TODO: later we will add:
-// import projectRoutes from "../routes/projectRoutes.js";
-// import bugRoutes from "../routes/bugRoutes.js";
-// app.use("/api/projects", projectRoutes);
-// app.use("/api/bugs", bugRoutes);
+// routes
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", requireAuth, projectRoutes);
+app.use("/api", requireAuth, bugRoutes);
 
 const start = async () => {
     try {
@@ -32,7 +33,7 @@ const start = async () => {
         console.log("Database synced");
 
         app.listen(PORT, () => {
-        console.log(`Backend listening on port ${PORT}`);
+            console.log(`Backend listening on port ${PORT}`);
         });
     } catch (err) {
         console.error("Failed to start server:", err);
