@@ -7,7 +7,7 @@ export const db = new Sequelize({
 
 export const synchronizeDatabase = async () => {
     await db.authenticate();
-    await db.sync();
+    await db.sync({ alter: true });
 };
 
 

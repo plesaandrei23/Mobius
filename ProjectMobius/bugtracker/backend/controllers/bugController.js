@@ -1,0 +1,79 @@
+
+import { Bug, Project, User } from "../models/index.js";
+
+// GET /api/projects/:projectId/bugs
+export const getBugs = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+
+        // Verify project exists
+        const project = await Project.findByPk(projectId);
+        if (!project) return res.status(404).json({ message: "Project not found" });
+
+        const bugs = await Bug.findAll({
+            where: { project_id: projectId },
+            include: [
+                { model: User, as: "reporter", attributes: ["id", "email"] },
+                { model: User, as: "allocated", attributes: ["id", "email"] }
+            ]
+        });
+
+        res.json(bugs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// POST /api/projects/:projectId/bugs
+export const createBug = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { title, description, severity, priority, commitLink } = req.body;
+        const reporterId = req.user.id;
+
+        // Verify project exists
+        const project = await Project.findByPk(projectId);
+        if (!project) return res.status(404).json({ message: "Project not found" });
+
+        const bug = await Bug.create({
+            projectId,
+            reporterId,
+            title,
+            description,
+            severity,
+            priority,
+            commitLink,
+            status: "OPEN"
+        });
+
+        res.status(201).json(bug);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// PATCH /api/bugs/:bugId
+export const updateBug = async (req, res) => {
+    try {
+        const { bugId } = req.params;
+        const { status, allocatedId, commitLink, severity, priority } = req.body; // Fields to update
+
+        const bug = await Bug.findByPk(bugId);
+        if (!bug) return res.status(404).json({ message: "Bug not found" });
+
+        if (status) bug.status = status;
+        if (allocatedId) bug.allocatedId = allocatedId;
+        if (severity) bug.severity = severity;
+        if (priority) bug.priority = priority;
+        if (commitLink) bug.commitLink = commitLink;
+
+        await bug.save();
+
+        res.json(bug);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};

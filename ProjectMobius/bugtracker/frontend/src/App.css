@@ -1,0 +1,9 @@
+/* App.css - Cleaned for new Design System */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.main-content {
+  width: 100%;
+}

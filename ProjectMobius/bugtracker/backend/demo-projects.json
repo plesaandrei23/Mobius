@@ -1,0 +1,26 @@
+[
+    {
+        "name": "E-Commerce Platform",
+        "description": "A full-stack e-commerce solution with React and Node.js.",
+        "repoUrl": "https://github.com/demo/ecommerce",
+        "ownerEmail": "alice@student.com"
+    },
+    {
+        "name": "Task Management App",
+        "description": "A productivity tool for managing daily tasks and team collaboration.",
+        "repoUrl": "https://github.com/demo/task-manager",
+        "ownerEmail": "bob@student.com"
+    },
+    {
+        "name": "Weather Dashboard",
+        "description": "Real-time weather tracking using third-party APIs.",
+        "repoUrl": "https://github.com/demo/weather-app",
+        "ownerEmail": "charlie@student.com"
+    },
+    {
+        "name": "Social Media Analytics",
+        "description": "Analytics tool for tracking engagement across social platforms.",
+        "repoUrl": "https://github.com/demo/social-analytics",
+        "ownerEmail": "dave@student.com"
+    }
+]
