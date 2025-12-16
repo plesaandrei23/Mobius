@@ -27,19 +27,42 @@ Description
     The application has  a permission system. A PM can add and modify a project, can change the status of a bug. A TST can add a bug.
 
 
-SOLUTION DEVELOPMENT
 
-V0
--we choose to dockerize our solution as to be able to replicate it on any device
--we base our solution on a simple REST arhitecture, presented in the 8th seminar
--we created models for all the tables we need in the database
--we created the database and all the links and the connections needed in the index in models
--basic frontend
+## Roles & Permissions
 
-V1.1
--we created controllers for authentification
--we created the routes for the authentification process made thru post request thru either register or login (tested it using postman)
+The application distinguishes between two main roles within a project:
 
+1.  **MP (Membru Proiect / Project Member/Manager)**:
+    -   **Who they are**: The creator of a project or users added as members.
+    -   **Capabilities**:
+        -   Manage project details.
+        -   Add other members (MP) or testers (TST).
+        -   View all bugs.
+        -   **Manage Bugs**: Can change bug status, priority, severity, and allocate bugs to themselves.
+        -   Provide solutions (commit links) when resolving bugs.
+
+2.  **TST (Tester)**:
+    -   **Who they are**: Users who join a project explicitly to test it.
+    -   **Capabilities**:
+        -   View project details.
+        -   **Report Bugs**: Create new bug reports with descriptions and severity.
+        -   Cannot modify bug status or project details.
+
+## Version History
+
+### V0
+-   We chose to dockerize our solution as to be able to replicate it on any device.
+-   We base our solution on a simple REST architecture, presented in the 8th seminar.
+-   We created models for all the tables we need in the database.
+-   We created the database and all the links and the connections needed in the index in models.
+-   Basic frontend.
+
+### V1.1
+-   We created controllers for authentication.
+-   We created the routes for the authentication process made thru post request thru either register or login (tested it using postman).
+
+#### API Endpoints Definition (V1.1 Scope)
+```javascript
 //TODO GET /api/projects (who: authenticated users, what: return all projects where the user is MP or TST)
 //TODO POST /api/projects (who: authenticated users (that will become MP on the project), what: created a new project and adds current user as MP)
 
@@ -53,6 +76,35 @@ V1.1
 //TODO POST   /api/projects/:projectId/testers        (optional – who: MP/admin, what: add another user as TST on the project)
 //TODO DELETE /api/projects/:projectId/testers/:userId (optional – who: MP/admin, what: remove a user from project testers)
 
-//TODO GET    /api/projects/:projectId/bugs       (who: MP or TST on that project, what: list all bugs for the project)
 //TODO POST   /api/projects/:projectId/bugs       (who: TST on that project, what: create a new bug for the project)
+```
+
+### V1.2 (Current)
+-   **Core Functionality**:
+    -   Implemented Project Discovery: Users can view all projects and join as Testers.
+    -   Implemented Role-Based Access Control: Validated Member (MP) vs Tester (TST) permissions.
+    -   Implemented Bug Management: 'Assign to Me' flow for MPs, status updates, and commit linking.
+-   **UI/UX Improvements**:
+    -   **Card Layout Fix**: Resolved card overlapping issues in `ProjectList` using CSS Grid and `box-sizing: border-box`.
+    -   Responsiveness: Improved layout adaptability for different screen sizes.
+-   **Compliance**:
+    -   Verified all minimal functionality requirements: Registration, Project Creation (MP), Tester Joining (TST), Bug Reporting, and Bug Resolution flows.
+-   **Admin Features**:
+    -   **Admin Dashboard**: Implemented a dashboard for Admins (`admin@admin.com`) to view and delete users and projects.
+    -   **Project Deletion**: Enabled deletion for Project Owners and Admins directly from the UI.
+    -   **User Management**: Admins can now oversee and manage the user base.
+
+### V1.3 (Planned Proposals)
+-   **Enhanced Collaboration**:
+    -   Add comment system for bugs to facilitate discussion between MPs and TSTs.
+-   **Dashboard & Analytics**:
+    -   Visual statistics: Bugs per project, Resolution rate, Average time to fix.
+-   **Notifications**:
+    -   Email or in-app notifications when a bug is assigned or verified.
+-   **Search & Filter**:
+    -   Search projects by name/tech stack.
+    -   Filter bugs by severity/status.
+-   **User Profile**:
+    -   Avatar upload and bio section.
+
 

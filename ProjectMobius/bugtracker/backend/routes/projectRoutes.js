@@ -4,7 +4,8 @@ import {
     createProject,
     getProject,
     addMember,
-    addTester
+    addTester,
+    deleteProject
 } from "../controllers/projectController.js";
 import { getBugs, createBug } from "../controllers/bugController.js";
 import { authenticate } from "../middleware/authMiddleware.js";
@@ -17,6 +18,7 @@ router.use(authenticate);
 router.get("/", getProjects);
 router.post("/", createProject);
 router.get("/:projectId", getProject);
+router.delete("/:projectId", deleteProject);
 router.post("/:projectId/members", addMember);
 router.post("/:projectId/testers", addTester);
 

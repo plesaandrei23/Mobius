@@ -59,7 +59,7 @@ export const createBug = async (req, res) => {
 export const updateBug = async (req, res) => {
     try {
         const { bugId } = req.params;
-        const { status, allocatedId, commitLink } = req.body; // Fields to update
+        const { status, allocatedId, commitLink, severity, priority } = req.body; // Fields to update
 
         const bug = await Bug.findByPk(bugId);
         if (!bug) return res.status(404).json({ message: "Bug not found" });
@@ -68,6 +68,8 @@ export const updateBug = async (req, res) => {
 
         if (status) bug.status = status;
         if (allocatedId) bug.allocatedId = allocatedId;
+        if (severity) bug.severity = severity;
+        if (priority) bug.priority = priority;
         if (commitLink) bug.commitLink = commitLink; // For when bug is resolved
 
         await bug.save();

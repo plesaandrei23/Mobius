@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 
-export const authenticate = (req, res, next) => {
+export const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return res.status(401).json({ message: "Authorization header missing" });
@@ -15,9 +15,19 @@ export const authenticate = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded;
+
+        // Dynamic import to avoid circular dependency issues if any
+        const { User } = await import("../models/index.js");
+        const user = await User.findByPk(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ message: "User no longer exists" });
+        }
+
+        req.user = user; // Set full user object or at least verify it exists
         next();
     } catch (err) {
+        console.error("JWT Verification Error:", err.message);
         return res.status(401).json({ message: "Invalid token" });
     }
 };

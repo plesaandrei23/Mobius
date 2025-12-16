@@ -13,9 +13,31 @@ export const AuthProvider = ({ children }) => {
       // In a real app, we might validate the token with the backend here
       // For now, we'll assume if a token exists, the user is logged in
       // We could decode the token to get user info if it's a JWT
-      setUser({ token }); 
+      // Try to get user data from local storage
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        setUser({ token, ...parsedUser });
+      } else {
+        setUser({ token });
+      }
     }
     setLoading(false);
+
+    // Axios interceptor for 401/403
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   const login = async (email, password) => {
@@ -23,6 +45,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('http://localhost:8080/api/auth/login', { email, password });
       const { token, user: userData } = res.data; // Adjust based on actual backend response
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData)); // Persist user info
       setUser({ token, ...userData });
       return { success: true };
     } catch (error) {
@@ -43,6 +66,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

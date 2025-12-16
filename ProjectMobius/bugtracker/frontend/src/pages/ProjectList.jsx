@@ -51,57 +51,109 @@ const ProjectList = () => {
         }
     };
 
+    const handleDeleteProject = async (projectId) => {
+        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        try {
+            await axios.delete(`http://localhost:8080/api/projects/${projectId}`, {
+                headers: { Authorization: `Bearer ${user.token}` }
+            });
+            // Update UI
+            setProjects(projects.filter(p => p.id !== projectId));
+            alert('Project deleted');
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete project. You might not be the owner.');
+        }
+    };
+
     if (loading) return <div>Loading projects...</div>;
     if (error) return <div className="error">{error}</div>;
 
     return (
-        <div className="project-list-container">
-            <div className="header-actions">
-                <h2>Your Projects</h2>
-                <button onClick={() => setShowCreate(!showCreate)}>
+        <div className="container">
+            <div className="header-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ color: 'var(--primary-color)' }}>Your Projects</h2>
+                <button className="btn" onClick={() => setShowCreate(!showCreate)}>
                     {showCreate ? 'Cancel' : 'Create New Project'}
                 </button>
             </div>
 
             {showCreate && (
-                <form onSubmit={handleCreate} className="create-project-form">
-                    <div className="form-group">
-                        <label>Project Name:</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Description:</label>
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Repository URL:</label>
-                        <input
-                            type="text"
-                            value={repoUrl}
-                            onChange={(e) => setRepoUrl(e.target.value)}
-                        />
-                    </div>
-                    <button type="submit">Save Project</button>
-                </form>
+                <div className="card" style={{ marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
+                    <h3 style={{ marginBottom: '1.5rem' }}>Create New Project</h3>
+                    <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="form-group">
+                            <label style={{ marginBottom: '0.5rem', display: 'block', color: 'var(--text-secondary)' }}>Project Name</label>
+                            <input
+                                className="input-field"
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label style={{ marginBottom: '0.5rem', display: 'block', color: 'var(--text-secondary)' }}>Description</label>
+                            <textarea
+                                className="input-field"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                style={{ minHeight: '100px', resize: 'vertical' }}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label style={{ marginBottom: '0.5rem', display: 'block', color: 'var(--text-secondary)' }}>Repository URL</label>
+                            <input
+                                className="input-field"
+                                type="text"
+                                value={repoUrl}
+                                onChange={(e) => setRepoUrl(e.target.value)}
+                            />
+                        </div>
+                        <button type="submit" className="btn">Save Project</button>
+                    </form>
+                </div>
             )}
 
-            <div className="projects-grid">
+            <div className="projects-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                gap: '4rem', // Increased gap
+                paddingBottom: '4rem',
+                alignItems: 'stretch' // Ensure consistent height
+            }}>
                 {projects.length === 0 ? (
-                    <p>No projects found. Create one!</p>
+                    <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                        <p>No projects found. Create one to get started!</p>
+                    </div>
                 ) : (
                     projects.map(project => (
-                        <div key={project.id} className="project-card">
-                            <h3>{project.name}</h3>
-                            <p>{project.description}</p>
-                            <Link to={`/projects/${project.id}`}>View Details</Link>
+                        <div key={project.id} className="card" style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            // Removed height: 100% to let content define height if needed, but flex stretch will handle it
+                            // Removed minHeight constraint if it was causing issues, but keeping it is fine if space allows
+                            minHeight: '200px',
+                            justifyContent: 'space-between'
+                        }}>
+                            <div>
+                                <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{project.name}</h3>
+                                <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{project.description || 'No description provided.'}</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
+                                <Link to={`/projects/${project.id}`} className="btn" style={{ flex: 1, textAlign: 'center', backgroundColor: 'var(--surface-dark)', border: '1px solid var(--primary-color)', color: 'var(--primary-color)' }}>
+                                    View Details
+                                </Link>
+                                {(project.ownerId === user.id || user.role === 'ADMIN') && (
+                                    <button
+                                        onClick={() => handleDeleteProject(project.id)}
+                                        className="btn"
+                                        style={{ backgroundColor: 'transparent', border: '1px solid var(--error)', color: 'var(--error)' }}
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     ))
                 )}

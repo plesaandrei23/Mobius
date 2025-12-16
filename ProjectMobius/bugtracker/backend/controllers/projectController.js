@@ -1,33 +1,19 @@
 import { Project, User, ProjectTeam, ProjectTester } from "../models/index.js";
 
 // GET /api/projects
+// GET /api/projects
 export const getProjects = async (req, res) => {
     try {
-        const userId = req.user.id;
-        // Find projects where user is MP or TST
-        // We can fetch all and filter, or use complex query. 
-        // For simplicity with Sequelize, let's fetch projects including members and testers
-        // and filter in JS or use where clause on association.
-
-        // Better approach: Find User and include projects
-        const user = await User.findByPk(userId, {
+        // Requirement: Users need to see ALL projects to be able to join them as testers.
+        // We fetch all projects. Frontend can visually distinguish "My Projects" vs others if needed.
+        const projects = await Project.findAll({
             include: [
-                { model: Project, as: "memberProjects" },
-                { model: Project, as: "testerProjects" }
+                { model: User, as: "members", attributes: ["id", "email"] },
+                { model: User, as: "testers", attributes: ["id", "email"] }
             ]
         });
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Combine and deduplicate if needed (though usually disjoint roles)
-        const projects = [...user.memberProjects, ...user.testerProjects];
-
-        // Deduplicate by ID just in case
-        const uniqueProjects = Array.from(new Map(projects.map(p => [p.id, p])).values());
-
-        res.json(uniqueProjects);
+        res.json(projects);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server error" });
@@ -47,7 +33,8 @@ export const createProject = async (req, res) => {
         const project = await Project.create({
             name,
             description,
-            repoUrl
+            repoUrl,
+            ownerId: userId
         });
 
         // Add creator as MP
@@ -156,6 +143,27 @@ export const addTester = async (req, res) => {
         });
 
         res.status(201).json({ message: "Tester added" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// DELETE /api/projects/:projectId
+export const deleteProject = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Project.findByPk(projectId);
+
+        if (!project) return res.status(404).json({ message: "Project not found" });
+
+        // Check ownership
+        if (project.ownerId !== req.user.id) {
+            return res.status(403).json({ message: "Not authorized to delete this project" });
+        }
+
+        await project.destroy();
+        res.json({ message: "Project deleted" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server error" });
