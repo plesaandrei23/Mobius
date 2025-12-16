@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile.backend 
     container_name: bugtracker-backend
     ports:
       - "8080:8080"
