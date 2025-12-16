@@ -1,3 +1,4 @@
+
 import { Bug, Project, User } from "../models/index.js";
 
 // GET /api/projects/:projectId/bugs
@@ -35,8 +36,6 @@ export const createBug = async (req, res) => {
         const project = await Project.findByPk(projectId);
         if (!project) return res.status(404).json({ message: "Project not found" });
 
-        // TODO: Verify user is TST on this project (optional but recommended)
-
         const bug = await Bug.create({
             projectId,
             reporterId,
@@ -64,13 +63,11 @@ export const updateBug = async (req, res) => {
         const bug = await Bug.findByPk(bugId);
         if (!bug) return res.status(404).json({ message: "Bug not found" });
 
-        // TODO: Verify user is MP on the project (optional but recommended)
-
         if (status) bug.status = status;
         if (allocatedId) bug.allocatedId = allocatedId;
         if (severity) bug.severity = severity;
         if (priority) bug.priority = priority;
-        if (commitLink) bug.commitLink = commitLink; // For when bug is resolved
+        if (commitLink) bug.commitLink = commitLink;
 
         await bug.save();
 

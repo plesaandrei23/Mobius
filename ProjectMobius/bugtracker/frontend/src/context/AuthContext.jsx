@@ -10,10 +10,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // In a real app, we might validate the token with the backend here
-      // For now, we'll assume if a token exists, the user is logged in
-      // We could decode the token to get user info if it's a JWT
-      // Try to get user data from local storage
       const savedUser = localStorage.getItem('user');
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
@@ -43,9 +39,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const res = await axios.post('http://localhost:8080/api/auth/login', { email, password });
-      const { token, user: userData } = res.data; // Adjust based on actual backend response
+      const { token, user: userData } = res.data;
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData)); // Persist user info
+      localStorage.setItem('user', JSON.stringify(userData));
       setUser({ token, ...userData });
       return { success: true };
     } catch (error) {

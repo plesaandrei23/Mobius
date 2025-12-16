@@ -63,20 +63,21 @@ The application distinguishes between two main roles within a project:
 
 #### API Endpoints Definition (V1.1 Scope)
 ```javascript
-//TODO GET /api/projects (who: authenticated users, what: return all projects where the user is MP or TST)
-//TODO POST /api/projects (who: authenticated users (that will become MP on the project), what: created a new project and adds current user as MP)
+//TODO GET /api/projects (who: authenticated users, what: return all projects where the user is MP or TST) //done
+//TODO POST /api/projects (who: authenticated users (that will become MP on the project), what: created a new project and adds current user as MP) //done
 
-//TODO GET    /api/projects/:projectId            (who: MP or TST on that project, what: return project details)
-//TODO PATCH  /api/projects/:projectId            (who: MP on that project, what: update project info)
+//TODO GET    /api/projects/:projectId            (who: MP or TST on that project, what: return project details) //done
+//TODO PATCH  /api/projects/:projectId            (who: MP on that project, what: update project info) //done
 
-//TODO POST   /api/projects/:projectId/members    (who: existing MP/admin, what: add a user as MP on the project)
-//TODO DELETE /api/projects/:projectId/members/:userId (who: existing MP/admin, what: remove a user from project members)
+//TODO POST   /api/projects/:projectId/members    (who: existing MP/admin, what: add a user as MP on the project) //done
+//TODO DELETE /api/projects/:projectId/members/:userId (who: existing MP/admin, what: remove a user from project members) //done
 
-//TODO POST   /api/projects/:projectId/testers/self   (who: authenticated user not MP there, what: add current user as TST on the project)
-//TODO POST   /api/projects/:projectId/testers        (optional – who: MP/admin, what: add another user as TST on the project)
-//TODO DELETE /api/projects/:projectId/testers/:userId (optional – who: MP/admin, what: remove a user from project testers)
+//TODO POST   /api/projects/:projectId/testers/self   (who: authenticated user not MP there, what: add current user as TST on the project) //done
+//TODO POST   /api/projects/:projectId/testers        (optional – who: MP/admin, what: add another user as TST on the project) //done
+//TODO DELETE /api/projects/:projectId/testers/:userId (optional – who: MP/admin, what: remove a user from project testers) //done
 
-//TODO POST   /api/projects/:projectId/bugs       (who: TST on that project, what: create a new bug for the project)
+//TODO GET    /api/projects/:projectId/bugs       (who: MP or TST on that project, what: list all bugs for the project) //done
+//TODO POST   /api/projects/:projectId/bugs       (who: TST on that project, what: create a new bug for the project) //done
 ```
 
 ### V1.2 (Current)
@@ -106,5 +107,4 @@ The application distinguishes between two main roles within a project:
     -   Filter bugs by severity/status.
 -   **User Profile**:
     -   Avatar upload and bio section.
-
 
